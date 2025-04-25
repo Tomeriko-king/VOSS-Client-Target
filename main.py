@@ -1,4 +1,4 @@
-from tcp_connection import tcp_connect_and_handle_loop
+from connection import tcp_connect_and_handle_loop
 
 
 def main():

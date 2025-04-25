@@ -5,7 +5,7 @@ import random
 
 
 def generate_screenshot_name() -> str:
-    return str(random.choices(string.ascii_lowercase + string.digits, k=16)) + '.png'
+    return ''.join(random.choices(string.ascii_lowercase + string.digits, k=16)) + '.png'
 
 
 def self_screenshot(screenshot_filename: str = None) -> str:
