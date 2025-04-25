@@ -1,3 +1,4 @@
+import os.path
 from pathlib import Path
 
 from take_screenshot import self_screenshot
@@ -17,3 +18,6 @@ def tcp_connect_and_handle_loop():
         local_filename = self_screenshot()
 
         socket_target.send_take_screenshot_response(Path(local_filename))
+
+        if os.path.exists(local_filename):
+            os.remove(local_filename)
