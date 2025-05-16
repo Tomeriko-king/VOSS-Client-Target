@@ -13,6 +13,3 @@ def generate_random_filename(extension='', n=16) -> str:
 
 def get_temp_directory() -> Path:
     return Path(tempfile.gettempdir())
-
-
-print(get_temp_directory())
