@@ -1,19 +1,15 @@
-import string
-
+from pathlib import Path
 from PIL import ImageGrab
-import random
+
+from utils import generate_random_filename, get_temp_directory
 
 
-def generate_screenshot_name() -> str:
-    return ''.join(random.choices(string.ascii_lowercase + string.digits, k=16)) + '.png'
-
-
-def self_screenshot(screenshot_filename: str = None) -> str:
-    if screenshot_filename is None:
-        screenshot_filename = generate_screenshot_name()
+def self_screenshot(screenshot_path: Path = None) -> Path:
+    if screenshot_path is None:
+        screenshot_path = get_temp_directory() / generate_random_filename('png')
 
     screenshot = ImageGrab.grab()
-    screenshot.save(screenshot_filename)
+    screenshot.save(screenshot_path)
     screenshot.close()
 
-    return screenshot_filename
+    return screenshot_path
